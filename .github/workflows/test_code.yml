@@ -6,6 +6,13 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GFP_API_KEY: ${{ secrets.GFP_API_KEY }}
+
 jobs:
   pre-commit:
     runs-on: ubuntu-latest
@@ -42,3 +49,21 @@ jobs:
           make dev
       - name: Test with pytest
         run: pytest
+  test_gfp:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      max-parallel: 12
+      matrix:
+        python-version: ["3.12"]
+        os: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          make dev
+      - name: Test with pytest
+        run: gfp test
