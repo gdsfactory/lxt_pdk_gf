@@ -59,7 +59,7 @@ def test_settings(
 ) -> None:
     """Avoid regressions when exporting settings."""
     component = cells[component_name]()
-    data_regression.check(component.to_dict())
+    data_regression.check(component.to_dict(with_ports=True))
 
 
 @pytest.mark.parametrize("component_name", component_names)
