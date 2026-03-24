@@ -2,7 +2,7 @@
 
 [build-system]
 build-backend = "setuptools.build_meta"
-requires = ["setuptools>=80", "wheel"]
+requires = ["setuptools==82.0.1", "wheel==0.46.3"]
 
 [lint.pydocstyle]
 convention = "google"
@@ -17,8 +17,8 @@ classifiers = [
   "Operating System :: OS Independent"
 ]
 dependencies = [
-  "gdsfactory~=9.39.0",
-  "gplugins[sax]>=1.4,<2"
+  "gdsfactory==9.39.3",
+  "gplugins[sax]==1.4.2"
 ]
 description = "Luxtelligence gdsfactory PDK"
 keywords = ["python"]
