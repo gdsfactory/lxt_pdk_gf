@@ -52,6 +52,11 @@ timeout = 300
 [tool.gdsfactoryplus.pdk]
 name = "lnoi400"
 
+
+[tool.elvis]
+short-layers = [[20, 0], [40, 0], [22, 0], [41, 0], [23, 0], [21, 0], [21, 1]]
+connected-layers = [[[20, 0], [22, 0]], [[22, 0], [23, 0]]]
+
 [tool.mypy]
 python_version = "3.11"
 strict = true
