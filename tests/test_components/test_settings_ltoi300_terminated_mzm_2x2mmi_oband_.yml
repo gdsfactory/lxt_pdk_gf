@@ -48,7 +48,7 @@ ports:
     width: 0.7
   _term:
     center:
-    - 5101.333
+    - 5107.741
     - 0
     layer: M1
     name: _term
@@ -66,8 +66,8 @@ ports:
     width: 78.432
   e3:
     center:
-    - -996.35
-    - 380.45
+    - -998.75
+    - 381.25
     layer: M2
     name: e3
     orientation: 90
@@ -75,8 +75,8 @@ ports:
     width: 150
   e4:
     center:
-    - -826.35
-    - 380.45
+    - -448.75
+    - 381.25
     layer: M2
     name: e4
     orientation: 90
@@ -84,8 +84,8 @@ ports:
     width: 150
   e5:
     center:
-    - -996.35
-    - -330.45
+    - -998.75
+    - -331.25
     layer: M2
     name: e5
     orientation: 270
@@ -93,8 +93,8 @@ ports:
     width: 150
   e6:
     center:
-    - -826.35
-    - -330.45
+    - -448.75
+    - -331.25
     layer: M2
     name: e6
     orientation: 270
