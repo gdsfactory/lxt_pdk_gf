@@ -487,6 +487,11 @@ def gc_focusing_1550(
     """Returns a focusing grating coupler for 1550 nm (C-band). The grating is
     optimized for TE polarization and a launch angle in air of 14.5 degrees
     w/r to the surface normal.
+
+    Args:
+        sleeve_width: 4.5.
+        cross_section: "xs_rwg1000".
+        waveguide_length: 10.0.
     """
     return _build_gc_focusing_1550(
         sleeve_width=sleeve_width,
@@ -1408,7 +1413,3 @@ def mzm_unbalanced_high_speed(**kwargs) -> gf.Component:
     mzm = mzm_unbalanced(**kwargs)
     mzm.info["additional_settings"] = dict(mzm.settings)
     return mzm
-
-
-if __name__ == "__main__":
-    gc_focusing_1550().show()

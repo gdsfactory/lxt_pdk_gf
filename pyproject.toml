@@ -46,6 +46,13 @@ plus = [
 [tool.codespell]
 ignore-words-list = "te, te/tm, te, ba, fpr, fpr_spacing, ro, rin, nd, donot, schem"
 
+[tool.elvis]
+short-layers = [[21, 0], [21, 1]]
+
+[tool.elvis.equivalent-ports]
+CPW_pad_linear = [["e1", "e2"]]
+uni_cpw_straight = [["e1", "bp1"], ["e2", "bp2"]]
+
 [tool.gdsfactoryplus.drc]
 timeout = 300
 
