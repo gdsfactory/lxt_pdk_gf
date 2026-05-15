@@ -478,7 +478,7 @@ def double_linear_inverse_taper(
 ###################
 
 
-@gf.cell
+@gf.cell(tags=["cells"])
 def gc_focusing_1550(
     sleeve_width: float = 4.5,
     cross_section: CrossSectionSpec = "xs_rwg1000",

@@ -833,7 +833,3 @@ def ring_resonator_multimode_point_coupler_cband(
         bus_xs=xs_rwg900(),
         ring_xs=xs_rwg900(width=ring_width),
     )
-
-
-if __name__ == "__main__":
-    terminated_eo_phase_shifter_oband().show()
