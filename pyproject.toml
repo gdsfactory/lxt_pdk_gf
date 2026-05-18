@@ -14,8 +14,8 @@ classifiers = [
   "Operating System :: OS Independent"
 ]
 dependencies = [
-  "gdsfactory~=9.39.0",
-  "gplugins[sax]>=1.4,<2"
+  "gdsfactory~=9.43.0",
+  "gplugins[sax]~=2.1.0"
 ]
 description = "Luxtelligence gdsfactory PDK"
 keywords = ["python"]
