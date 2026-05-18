@@ -1,6 +1,5 @@
 install:
-	pip install -e .[dev]
-	pre-commit install
+	uv sync --extra dev
 
 dev:
 	pip install -e .[dev,docs] --config-settings editable_mode=compat
@@ -10,8 +9,8 @@ dev:
 test:
 	pytest -s
 
-test-force:
-	pytest --force-regen -s tests/
+test-force: install
+	uv run pytest --force-regen -s tests/
 
 test-ports:
 	pytest -s tests/test_components.py::test_optical_port_positions
