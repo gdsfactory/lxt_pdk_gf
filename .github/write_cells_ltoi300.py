@@ -18,6 +18,7 @@ def _can_resolve(module_path: str, name: str) -> bool:
     except Exception:
         return False
 
+
 filepath = PATH.repo / "docs" / "cells_ltoi300.md"
 
 skip = {}
