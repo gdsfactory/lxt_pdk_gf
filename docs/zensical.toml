@@ -2,10 +2,12 @@
 nav = [
   {"Home" = "index.md"},
   {"Reference" = [
+    {"Cells Lnoi400" = "cells_lnoi400.md"},
+    {"Cells Ltoi300" = "cells_ltoi300.md"},
     {"Changelog" = "changelog.md"}
   ]}
 ]
-site_dir = "docs/_build/html"
+site_dir = "_build/html"
 site_name = "Luxtelligence gdsfactory PDK"
 site_url = "https://gdsfactory.github.io/lxt_pdk_gf"
 

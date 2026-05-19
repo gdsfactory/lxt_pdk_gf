@@ -3,7 +3,7 @@ import inspect
 from lnoi400 import _cells as cells
 from lnoi400.config import PATH
 
-filepath = PATH.repo / "docs" / "cells_lnoi400.rst"
+filepath = PATH.repo / "docs" / "cells_lnoi400.md"
 
 skip = {}
 
@@ -40,10 +40,10 @@ Cells lnoi400
             f.write(
                 f"""
 
-{name}
-----------------------------------------------------
+## {name}
 
-.. autofunction:: lnoi400.cells.{name}
+
+::: lnoi400.cells.{name}
 
 """
             )
@@ -51,19 +51,17 @@ Cells lnoi400
             f.write(
                 f"""
 
-{name}
-----------------------------------------------------
+## {name}
 
-.. autofunction:: lnoi400.cells.{name}
 
-.. plot::
-  :include-source:
+::: lnoi400.cells.{name}
 
-  import lnoi400
+```python
+import lnoi400
 
-  c = lnoi400.cells.{name}({kwargs}).copy()
-  c.draw_ports()
-  c.plot()
-
+c = lnoi400.cells.{name}({kwargs}).copy()
+c.draw_ports()
+c.plot()
+```
 """
             )

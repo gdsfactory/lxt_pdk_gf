@@ -3,7 +3,7 @@ import inspect
 from ltoi300 import _cells as cells
 from ltoi300.config import PATH
 
-filepath = PATH.repo / "docs" / "cells_ltoi300.rst"
+filepath = PATH.repo / "docs" / "cells_ltoi300.md"
 
 skip = {}
 
@@ -40,10 +40,10 @@ Cells ltoi300
             f.write(
                 f"""
 
-{name}
-----------------------------------------------------
+## {name}
 
-.. autofunction:: ltoi300.cells.{name}
+
+::: ltoi300.cells.{name}
 
 """
             )
@@ -51,19 +51,17 @@ Cells ltoi300
             f.write(
                 f"""
 
-{name}
-----------------------------------------------------
+## {name}
 
-.. autofunction:: ltoi300.cells.{name}
 
-.. plot::
-  :include-source:
+::: ltoi300.cells.{name}
 
-  import ltoi300
+```python
+import ltoi300
 
-  c = ltoi300.cells.{name}({kwargs}).copy()
-  c.draw_ports()
-  c.plot()
-
+c = ltoi300.cells.{name}({kwargs}).copy()
+c.draw_ports()
+c.plot()
+```
 """
             )
