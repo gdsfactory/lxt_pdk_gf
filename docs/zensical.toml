@@ -19,7 +19,7 @@ site_url = "https://gdsfactory.github.io/lxt_pdk_gf"
 [project.plugins.mkdocstrings.handlers.python]
 
 [project.plugins.mkdocstrings.handlers.python.options]
-allow_inspection = true
+force_inspection = true
 docstring_style = "google"
 show_root_toc_entry = false
 show_source = false
