@@ -35,9 +35,12 @@ dev = [
   "towncrier"
 ]
 docs = [
-  "jupytext",
-  "matplotlib",
-  "jupyter-book==1.0.4"
+  "jupyter",
+  "mkdocs-material",
+  "mkdocs-with-pdf",
+  "nbconvert",
+  "mkdocstrings[python]>=0.27.0",
+  "zensical>=0.0.40,<0.1.0"
 ]
 plus = [
   "gdsfactoryplus"
