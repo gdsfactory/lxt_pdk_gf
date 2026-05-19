@@ -3,6 +3,21 @@ import inspect
 from ltoi300 import _cells as cells
 from ltoi300.config import PATH
 
+
+def _can_resolve(module_path: str, name: str) -> bool:
+    """Check if griffe can resolve a cell (skip alias resolution errors)."""
+    try:
+        import griffe
+
+        loader = griffe.GriffeLoader()
+        mod = loader.load(module_path)
+        member = mod.members.get(name)
+        if member and hasattr(member, "is_alias") and member.is_alias:
+            member.resolve(loader)
+        return True
+    except Exception:
+        return False
+
 filepath = PATH.repo / "docs" / "cells_ltoi300.md"
 
 skip = {}
@@ -36,27 +51,17 @@ Cells ltoi300
                 and p not in skip_settings
             ]
         )
+        resolved = _can_resolve("ltoi300.cells", name)
         if name in skip_plot:
-            f.write(
-                f"""
-
-## {name}
-
-
-::: ltoi300.cells.{name}
-
-"""
-            )
+            f.write(f"\n\n## {name}\n\n")
+            if resolved:
+                f.write(f"\n::: ltoi300.cells.{name}\n\n")
         else:
+            f.write(f"\n\n## {name}\n\n")
+            if resolved:
+                f.write(f"\n::: ltoi300.cells.{name}\n\n")
             f.write(
-                f"""
-
-## {name}
-
-
-::: ltoi300.cells.{name}
-
-```python
+                f"""```python
 import ltoi300
 
 c = ltoi300.cells.{name}({kwargs}).copy()
