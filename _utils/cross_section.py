@@ -153,8 +153,7 @@ def partial_etch_cross_section(
         c = p.extrude(xs)
         c.plot()
 
-    .. code::
-
+    ```
 
            ┌────────────────────────────────────────────────────────────┐
            │                                                            │
@@ -180,6 +179,7 @@ def partial_etch_cross_section(
            │                                                            │
            │                                                            │
            └────────────────────────────────────────────────────────────┘
+    ```
     """
     section_list: list[Section] = list(sections or [])
 
