@@ -544,7 +544,7 @@ def double_linear_inverse_taper_mirror(
     upper_taper_start_width: float = 0.25,
     upper_taper_length: float = 240.0,
     slab_removal_width: float = 20.0,
-    input_ext: float = 0.0,
+    input_ext: float = 30.0,
 ) -> gf.Component:
     """Same as double_linear_inverse_taper, but mirrored so the narrow end is on the right.
 
@@ -1599,10 +1599,10 @@ def die_phix_rf(
     layer_ruler: LayerSpec = "LN_RIDGE",
     ruler_yoffset: float = 0,
     ruler_xoffset: float = 0,
-    fiber_coupler_xoffset: float = 50,
+    fiber_coupler_xoffset: float = 0,
     with_right_fiber_coupler: bool = True,
     with_left_fiber_coupler: bool = False,
-    text_offset: Float2 = (0, 20),
+    text_offset: Float2 = (-40, 20),
     text: ComponentSpec | None = "text_rectangular",
     xoffset_dc_pads: float = -100,
 ) -> gf.Component:
