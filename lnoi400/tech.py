@@ -3,6 +3,9 @@ from functools import partial
 import gdsfactory as gf
 from gdsfactory.cross_section import (
     CrossSection,
+    Section,
+    port_names_electrical,
+    port_types_electrical,
 )
 from gdsfactory.technology import (
     LayerLevel,
@@ -268,6 +271,30 @@ def xs_uni_cpw(
     )
 
     return xs_cpw
+
+
+@xsection
+def gsg(
+    trace_width: float = 100,
+    layer: str = "TL",
+    gap: float = 50,
+    radius: float | None = None,
+    **kwargs,
+) -> CrossSection:
+    """Return GSG cross_section."""
+    width = trace_width
+    sections = [
+        Section(
+            width=width,
+            layer=layer,
+            offset=0,
+            port_names=port_names_electrical,
+            port_types=port_types_electrical,
+        ),
+        Section(width=width, layer=layer, offset=-gap - width),
+        Section(width=width, layer=layer, offset=+gap + width),
+    ]
+    return CrossSection(sections=tuple(sections), radius=radius or 3 * width + 2 * gap)
 
 
 ############################
