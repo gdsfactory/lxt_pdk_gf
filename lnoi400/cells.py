@@ -3,7 +3,16 @@ from functools import partial
 import gdsfactory as gf
 import numpy as np
 from gdsfactory.routing import route_quad
-from gdsfactory.typings import ComponentSpec, CrossSectionSpec
+from gdsfactory.typings import (
+    AngleInDegrees,
+    ComponentSpec,
+    CrossSectionSpec,
+    Float2,
+    Ints,
+    LayerSpec,
+    LayerSpecs,
+    Size,
+)
 
 from _utils.chip_floorplan import chip_frame  # noqa: F401
 from _utils.spline import (
@@ -19,6 +28,25 @@ from lnoi400.tech import LAYER, xs_uni_cpw
 ################
 # Straights
 ################
+
+
+@gf.cell(tags=["cells"])
+def straight(
+    length: float = 10.0,
+    cross_section: CrossSectionSpec = "xs_rwg1000",
+    **kwargs,
+) -> gf.Component:
+    """_straight.
+
+    Args:
+        length: 10.0.
+        cross_section: "xs_rwg1000".
+    """
+    return gf.components.straight(
+        length=length,
+        cross_section=cross_section,
+        **kwargs,
+    )
 
 
 @gf.cell(tags=["cells"])
@@ -73,6 +101,40 @@ def straight_rwg3000(length: float = 10.0, **kwargs) -> gf.Component:
 ##########
 # Bends
 ##########
+
+
+@gf.cell(tags=["waveguides"])
+def bend_euler(
+    radius: float | None = 80,
+    angle: float = 90,
+    p: float = 0.5,
+    width: float | None = None,
+    cross_section: CrossSectionSpec = "xs_rwg1000",
+    allow_min_radius_violation: bool = False,
+    with_arc_floorplan: bool = True,
+) -> gf.Component:
+    """Regular degree euler bend.
+
+    Args:
+        radius: in um. Defaults to cross_section_radius.
+        angle: total angle of the curve.
+        p: Proportion of the curve that is an Euler curve.
+        width: width to use. Defaults to cross_section.width.
+        cross_section: specification (CrossSection, string, CrossSectionFactory dict).
+        allow_min_radius_violation: if True allows radius to be smaller than cross_section radius.
+        with_arc_floorplan: if True the size of the bend will be adjusted to match an arc bend with the specified radius. If False: `radius` is the minimum radius of curvature.
+    """
+    return gf.c.bend_euler(
+        radius=radius,
+        angle=angle,
+        p=p,
+        width=width,
+        cross_section=cross_section,
+        allow_min_radius_violation=allow_min_radius_violation,
+        with_arc_floorplan=with_arc_floorplan,
+        npoints=None,
+        layer=None,
+    )
 
 
 @gf.cell(tags=["cells"])
@@ -471,6 +533,43 @@ def double_linear_inverse_taper(
     double_taper.flatten()
 
     return double_taper
+
+
+@gf.cell(tags=["cells"])
+def double_linear_inverse_taper_mirror(
+    cross_section_start: CrossSectionSpec = "xs_swg250",
+    cross_section_end: CrossSectionSpec = "xs_rwg1000",
+    lower_taper_length: float = 120.0,
+    lower_taper_end_width: float = 2.05,
+    upper_taper_start_width: float = 0.25,
+    upper_taper_length: float = 240.0,
+    slab_removal_width: float = 20.0,
+    input_ext: float = 30.0,
+) -> gf.Component:
+    """Same as double_linear_inverse_taper, but mirrored so the narrow end is on the right.
+
+    Args:
+        cross_section_start: starting cross section.
+        cross_section_end: ending cross section.
+        lower_taper_length: length of the lower taper in um.
+        lower_taper_end_width: end width of the lower taper in um.
+        upper_taper_start_width: start width of the upper taper in um.
+        upper_taper_length: length of the upper taper in um.
+        slab_removal_width: width of the slab removal in um.
+        input_ext: input extension in um.
+    """
+
+    c = double_linear_inverse_taper(
+        cross_section_start=cross_section_start,
+        cross_section_end=cross_section_end,
+        lower_taper_length=lower_taper_length,
+        lower_taper_end_width=lower_taper_end_width,
+        upper_taper_start_width=upper_taper_start_width,
+        upper_taper_length=upper_taper_length,
+        slab_removal_width=slab_removal_width,
+        input_ext=input_ext,
+    )
+    return gf.functions.mirror(c)
 
 
 ###################
@@ -1413,3 +1512,158 @@ def mzm_unbalanced_high_speed(**kwargs) -> gf.Component:
     mzm = mzm_unbalanced(**kwargs)
     mzm.info["additional_settings"] = dict(mzm.settings)
     return mzm
+
+
+@gf.cell(tags=["text"])
+def text_rectangular(
+    text: str = "abc",
+    size: float = 3,
+    justify: str = "left",
+    layer: LayerSpec | None = "LN_RIDGE",
+    layers: LayerSpecs | None = None,
+) -> gf.Component:
+    """Pixel based font, guaranteed to be manhattan, without acute angles.
+
+    Args:
+        text: string.
+        size: pixel size.
+        justify: left, right or center.
+        layer: for text.
+        layers: optional for duplicating the text.
+    """
+    return gf.c.text_rectangular(
+        text=text,
+        size=size,
+        justify=justify,
+        position=(0.0, 0.0),
+        layer=layer,
+        layers=layers,
+    )
+
+
+@gf.cell(tags=["die"])
+def pad(
+    size: Size = (90, 90),
+    port_orientation: AngleInDegrees | None = 0,
+    port_orientations: Ints | None = (180, 90, 0, -90),
+) -> gf.Component:
+    """Returns rectangular pad with ports.
+
+    Args:
+        size: x, y size.
+        port_orientation: in degrees for the center port.
+        port_orientations: list of port_orientations to add. None does not add ports.
+    """
+    return gf.c.pad(
+        size=size,
+        port_orientation=port_orientation,
+        port_orientations=port_orientations,
+        layer=LAYER.TL,
+        bbox_layers=None,
+        bbox_offsets=None,
+        port_inclusion=0,
+        port_type="pad",
+    )
+
+
+@gf.cell(tags=["die"])
+def pad_gsg(length: float = 100):
+    """Returns rectangular RF pad with ports.
+
+    Args:
+        length: length of the pad.
+    """
+    return gf.c.straight(cross_section="gsg", length=length)
+
+
+@gf.cell(tags=["die"])
+def die_phix_rf(
+    xsize: float = 10e3,
+    ysize: float = 5e3,
+    nfibers: int = 16,
+    npads: int | None = None,
+    npads_rf: int = 6,
+    fiber_pitch: float = 127.0,
+    pad_pitch: float = 150.0,
+    pad_pitch_gsg: float = 720.0,
+    edge_coupler: ComponentSpec | None = "double_linear_inverse_taper_mirror",
+    grating_coupler: ComponentSpec | None = None,
+    cross_section: CrossSectionSpec = "xs_rwg1000",
+    pad: ComponentSpec = "pad",
+    pad_gsg: ComponentSpec = "pad_gsg",
+    edge_to_pad_distance: float = 200.0,
+    edge_coupler_keepout: float = 1200.0,
+    pad_port_name_top: str = "e4",
+    pad_port_name_bot: str = "e2",
+    layer_fiducial: LayerSpec = "LN_RIDGE",
+    layer_ruler: LayerSpec = "LN_RIDGE",
+    ruler_yoffset: float = 0,
+    ruler_xoffset: float = 0,
+    fiber_coupler_xoffset: float = 0,
+    with_right_fiber_coupler: bool = True,
+    with_left_fiber_coupler: bool = False,
+    text_offset: Float2 = (-40, 20),
+    text: ComponentSpec | None = "text_rectangular",
+    xoffset_dc_pads: float = -100,
+) -> gf.Component:
+    """Die with east west edge couplers and RF pads on north and south.
+
+    Args:
+        xsize: die x size in um.
+        ysize: die y size in um.
+        nfibers: number of fibers.
+        npads: number of DC pads. Computed from xsize and pad_pitch if None.
+        npads_rf: number of RF pads.
+        fiber_pitch: of the edge couplers in um.
+        pad_pitch: pitch between pads.
+        pad_pitch_gsg: pitch between gsg pads.
+        edge_coupler: edge coupler component.
+        grating_coupler: grating coupler component.
+        cross_section: waveguide cross_section.
+        pad: pad component.
+        pad_gsg: gsg pad component.
+        edge_to_pad_distance: distance from edge to first pad.
+        edge_coupler_keepout: keepout zone (in um) on each side of the die for the edge coupler / fiducials / routing margins. Used to compute npads.
+        pad_port_name_top: name of the pad port name at the top facing south.
+        pad_port_name_bot: name of the pad port name at the bottom facing north.
+        layer_fiducial: layer for fiducials.
+        layer_ruler: layer for ruler.
+        ruler_yoffset: y offset for ruler.
+        ruler_xoffset: x offset for ruler.
+        fiber_coupler_xoffset: x offset for fiber couplers.
+        with_right_fiber_coupler: if True adds right fiber coupler.
+        with_left_fiber_coupler: if True adds left fiber coupler.
+        text_offset: offset for the text label.
+        text: text component.
+        xoffset_dc_pads: x offset for dc pads.
+    """
+    if npads is None:
+        npads = max(0, min(int((xsize - 2 * edge_coupler_keepout) / pad_pitch) - 1, 60))
+    d = gf.c.die_frame(size=(xsize, ysize), layer_floorplan="CHIP_CONTOUR")
+    return gf.c.die_frame_phix_rf(
+        die_frame=d,
+        nfibers=nfibers,
+        npads=npads,
+        npads_rf=npads_rf,
+        fiber_pitch=fiber_pitch,
+        pad_pitch=pad_pitch,
+        pad_pitch_gsg=pad_pitch_gsg,
+        edge_coupler=edge_coupler,
+        grating_coupler=grating_coupler,
+        cross_section=cross_section,
+        pad=pad,
+        pad_gsg=pad_gsg,
+        edge_to_pad_distance=edge_to_pad_distance,
+        pad_port_name_top=pad_port_name_top,
+        pad_port_name_bot=pad_port_name_bot,
+        layer_ruler=layer_ruler,
+        layer_fiducial=layer_fiducial,
+        ruler_yoffset=ruler_yoffset,
+        ruler_xoffset=ruler_xoffset,
+        fiber_coupler_xoffset=fiber_coupler_xoffset,
+        with_right_fiber_coupler=with_right_fiber_coupler,
+        with_left_fiber_coupler=with_left_fiber_coupler,
+        text_offset=text_offset,
+        text=text,
+        xoffset_dc_pads=xoffset_dc_pads,
+    )
