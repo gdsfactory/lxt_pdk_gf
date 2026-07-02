@@ -1,5 +1,7 @@
 # Luxtelligence Process Design Kit (PDK) for gdsfactory
 
+Luxtelligence's PDK is built on a lithium tantalate/lithium niobate electro-optic platform, leveraging their large Pockels coefficients for high-speed modulation.
+
 <!-- BADGES:START -->
 [![Docs](https://github.com/gdsfactory/lxt_pdk_gf/actions/workflows/pages.yml/badge.svg)](https://github.com/gdsfactory/lxt_pdk_gf/actions/workflows/pages.yml)
 [![Tests](https://github.com/gdsfactory/lxt_pdk_gf/actions/workflows/test_code.yml/badge.svg)](https://github.com/gdsfactory/lxt_pdk_gf/actions/workflows/test_code.yml)
@@ -80,8 +82,18 @@ After installing the PDK, you can verify that it is working correctly by running
 
 ## Pre-commit
 
+Pre-commit hooks are centrally maintained in [pdk-ci-workflow](https://github.com/doplaydo/pdk-ci-workflow). `make dev` fetches the canonical config and installs the git hook.
+
 ```bash
-make pre-commit
+make dev
+```
+
+## Tests
+
+Run the test suite:
+
+```bash
+make test
 ```
 
 ## Release
