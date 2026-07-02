@@ -1,5 +1,7 @@
 # Luxtelligence Process Design Kit (PDK) for gdsfactory
 
+Luxtelligence's PDK is built on a lithium tantalate/lithium niobate electro-optic platform, leveraging their large Pockels coefficients for high-speed modulation.
+
 <!-- BADGES:START -->
 [![Docs](https://github.com/gdsfactory/lxt_pdk_gf/actions/workflows/pages.yml/badge.svg)](https://github.com/gdsfactory/lxt_pdk_gf/actions/workflows/pages.yml)
 [![Tests](https://github.com/gdsfactory/lxt_pdk_gf/actions/workflows/test_code.yml/badge.svg)](https://github.com/gdsfactory/lxt_pdk_gf/actions/workflows/test_code.yml)
