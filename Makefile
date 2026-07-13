@@ -31,18 +31,21 @@ docs-pdf:
 	uv run python .github/write_cells_lnoi400.py
 	uv run python .github/write_cells_ltoi300.py
 	cp CHANGELOG.md docs/changelog.md
+	cp README.md docs/index.md
 	uv run mkdocs build -f mkdocs-pdf.yml
 
 docs:
 	uv run python .github/write_cells_lnoi400.py
 	uv run python .github/write_cells_ltoi300.py
 	cp CHANGELOG.md docs/changelog.md
+	cp README.md docs/index.md
 	uv run --extra docs zensical build -f docs/zensical.toml
 
 docs-serve:
 	uv run python .github/write_cells_lnoi400.py
 	uv run python .github/write_cells_ltoi300.py
 	cp CHANGELOG.md docs/changelog.md
+	cp README.md docs/index.md
 	uv run --extra docs zensical serve -f docs/zensical.toml -a localhost:8080
 
 update-changelog:
