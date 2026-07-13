@@ -12,6 +12,8 @@ site_dir = "_build/html"
 site_name = "Luxtelligence gdsfactory PDK"
 site_url = "https://gdsfactory.github.io/lxt_pdk_gf"
 
+[project.markdown_extensions.pymdownx.snippets]
+
 [project.plugins.autorefs]
 
 [project.plugins.mkdocstrings]
@@ -25,8 +27,6 @@ show_root_toc_entry = false
 show_source = false
 
 [project.plugins.search]
-
-[project.markdown_extensions.pymdownx.snippets]
 
 [project.theme]
 name = "material"
