@@ -26,5 +26,7 @@ show_source = false
 
 [project.plugins.search]
 
+[project.markdown_extensions.pymdownx.snippets]
+
 [project.theme]
 name = "material"
