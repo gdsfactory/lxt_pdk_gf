@@ -4,7 +4,7 @@ install:
 dev:
 	uv sync --extra dev --extra docs
 	uv pip install -e .[dev,docs] --config-settings editable_mode=compat
-	curl -sf https://raw.githubusercontent.com/doplaydo/pdk-ci-workflow/main/templates/.pre-commit-config.yaml -o .pre-commit-config.yaml
+	curl -sf https://raw.githubusercontent.com/doplaydo/pdk-ci-workflow-public/main/templates/.pre-commit-config.yaml -o .pre-commit-config.yaml
 	uv run pre-commit install
 
 test:
@@ -30,19 +30,16 @@ build:
 docs-pdf:
 	uv run python .github/write_cells_lnoi400.py
 	uv run python .github/write_cells_ltoi300.py
-	cp CHANGELOG.md docs/changelog.md
 	uv run mkdocs build -f mkdocs-pdf.yml
 
 docs:
 	uv run python .github/write_cells_lnoi400.py
 	uv run python .github/write_cells_ltoi300.py
-	cp CHANGELOG.md docs/changelog.md
 	uv run --extra docs zensical build -f docs/zensical.toml
 
 docs-serve:
 	uv run python .github/write_cells_lnoi400.py
 	uv run python .github/write_cells_ltoi300.py
-	cp CHANGELOG.md docs/changelog.md
 	uv run --extra docs zensical serve -f docs/zensical.toml -a localhost:8080
 
 update-changelog:

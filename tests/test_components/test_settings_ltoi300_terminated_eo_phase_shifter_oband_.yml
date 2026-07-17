@@ -5,7 +5,7 @@ ports:
     center:
     - 5000
     - 0
-    layer: M1
+    layer: 13
     name: _e2
     orientation: 0
     port_type: electrical
@@ -14,7 +14,7 @@ ports:
     center:
     - 5107.741
     - 0
-    layer: M1
+    layer: 13
     name: _term
     orientation: 0
     port_type: electrical
