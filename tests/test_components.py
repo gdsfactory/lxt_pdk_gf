@@ -60,9 +60,9 @@ def _gds_difftest(
         ref_top = ref_layout.top_cell()
         run_top = run_layout.top_cell()
 
-        layer_ids = {
-            (li.layer, li.datatype) for li in ref_layout.layer_infos()
-        } | {(li.layer, li.datatype) for li in run_layout.layer_infos()}
+        layer_ids = {(li.layer, li.datatype) for li in ref_layout.layer_infos()} | {
+            (li.layer, li.datatype) for li in run_layout.layer_infos()
+        }
 
         failures = []
         for layer, datatype in sorted(layer_ids):
