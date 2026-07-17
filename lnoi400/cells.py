@@ -1639,6 +1639,13 @@ def die_phix_rf(
     """
     if npads is None:
         npads = max(0, min(int((xsize - 2 * edge_coupler_keepout) / pad_pitch) - 1, 60))
+    pad_side_distance = (
+        xsize / 2
+        - npads * pad_pitch / 2
+        + edge_to_pad_distance
+        - pad_pitch / 2
+        + xoffset_dc_pads
+    )
     d = gf.c.die_frame(size=(xsize, ysize), layer_floorplan="CHIP_CONTOUR")
     return gf.c.die_frame_phix_rf(
         die_frame=d,
@@ -1665,5 +1672,5 @@ def die_phix_rf(
         with_left_fiber_coupler=with_left_fiber_coupler,
         text_offset=text_offset,
         text=text,
-        xoffset_dc_pads=xoffset_dc_pads,
+        pad_side_distance=pad_side_distance,
     )
