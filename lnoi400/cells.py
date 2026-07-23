@@ -685,6 +685,38 @@ def CPW_pad_linear(
         layer="TL",
     )
 
+    # GSG ports at the wide (e1) end
+    gnd_inner = start_width / 2.0 + start_gap
+    gnd_outer = end_width / 2.0 + end_gap + ground_planes_width
+    dbu = 0.001
+    gnd_width = round((gnd_outer - gnd_inner) / (2 * dbu)) * (2 * dbu)
+    gnd_center_y = (gnd_inner + gnd_outer) / 2.0
+
+    pad.add_port(
+        name="S",
+        center=(length_straight, 0.0),
+        width=start_width,
+        orientation=180.0,
+        port_type="electrical",
+        layer="TL",
+    )
+    pad.add_port(
+        name="G_top",
+        center=(length_straight, gnd_center_y),
+        width=gnd_width,
+        orientation=180.0,
+        port_type="electrical",
+        layer="TL",
+    )
+    pad.add_port(
+        name="G_bot",
+        center=(length_straight, -gnd_center_y),
+        width=gnd_width,
+        orientation=180.0,
+        port_type="electrical",
+        layer="TL",
+    )
+
     return pad
 
 
@@ -739,6 +771,9 @@ def uni_cpw_straight(
         name="bp2",
         port=bp2.ports["e1"],
     )
+    for suffix in ("S", "G_top", "G_bot"):
+        cpw.add_port(name=f"bp1_{suffix}", port=bp1.ports[suffix])
+        cpw.add_port(name=f"bp2_{suffix}", port=bp2.ports[suffix])
     cpw.flatten()
 
     return cpw
@@ -805,6 +840,9 @@ def trail_cpw(
         name="bp2",
         port=bp2.ports["e1"],
     )
+    for suffix in ("S", "G_top", "G_bot"):
+        cpw.add_port(name=f"bp1_{suffix}", port=bp1.ports[suffix])
+        cpw.add_port(name=f"bp2_{suffix}", port=bp2.ports[suffix])
 
     # Initiate T-rail polygon element. Create a bit more to ensure round corners close to electrodes
     trailpol = gf.kdb.DPolygon(
@@ -1465,8 +1503,12 @@ def mzm_unbalanced(
     # Expose the ports
 
     exposed_ports = [
-        ("e1", rf_line.ports["bp1"]),
-        ("e2", rf_line.ports["bp2"]),
+        ("G1_top", rf_line.ports["bp1_G_top"]),
+        ("S1", rf_line.ports["bp1_S"]),
+        ("G1_bot", rf_line.ports["bp1_G_bot"]),
+        ("G2_top", rf_line.ports["bp2_G_top"]),
+        ("S2", rf_line.ports["bp2_S"]),
+        ("G2_bot", rf_line.ports["bp2_G_bot"]),
     ]
 
     if "1x2" in kwargs["splitter"]:
