@@ -253,6 +253,32 @@ def S_bend_vert(
     return bend_cell
 
 
+@gf.cell(tags=["waveguides"])
+def bend_s(
+    size: Size = (11.0, 1.8),
+    npoints: int = 99,
+    cross_section: CrossSectionSpec = "xs_rwg1000",
+    allow_min_radius_violation: bool = False,
+    width: float | None = None,
+) -> gf.Component:
+    """Return S bend with bezier curve.
+
+    Args:
+        size: in x and y direction.
+        npoints: number of points.
+        cross_section: specification (CrossSection, string, CrossSectionFactory dict).
+        allow_min_radius_violation: if True allows radius to be smaller than cross_section radius.
+        width: width to use. Defaults to cross_section.width.
+    """
+    return gf.c.bend_s(
+        size=size,
+        npoints=npoints,
+        cross_section=cross_section,
+        allow_min_radius_violation=allow_min_radius_violation,
+        width=width,
+    )
+
+
 ################
 # MMIs
 ################
