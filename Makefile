@@ -5,6 +5,7 @@ dev:
 	uv sync --extra dev --extra docs
 	uv pip install -e .[dev,docs] --config-settings editable_mode=compat
 	curl -sf https://raw.githubusercontent.com/doplaydo/pdk-ci-workflow-public/main/templates/.pre-commit-config.yaml -o .pre-commit-config.yaml
+	uv run pre-commit clean
 	uv run pre-commit install
 
 test:
