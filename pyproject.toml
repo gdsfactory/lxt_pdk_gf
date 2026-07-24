@@ -15,6 +15,7 @@ classifiers = [
 ]
 dependencies = [
   "gdsfactory~=9.45.0",
+  "gdsfactoryplus",
   "gplugins[sax]~=2.1.0"
 ]
 description = "Luxtelligence gdsfactory PDK"
@@ -27,7 +28,6 @@ version = "2.0"
 
 [project.optional-dependencies]
 dev = [
-  "gdsfactoryplus",
   "pre-commit",
   "pytest",
   "pytest-cov",
@@ -41,9 +41,6 @@ docs = [
   "nbconvert",
   "mkdocstrings[python]>=0.27.0",
   "zensical>=0.0.40,<0.1.0"
-]
-plus = [
-  "gdsfactoryplus"
 ]
 
 [tool.codespell]
