@@ -34,6 +34,9 @@ dev = [
   "pytest_regressions",
   "towncrier"
 ]
+gf-main = [
+  "gdsfactory @ git+https://github.com/gdsfactory/gdsfactory.git@main",
+]
 docs = [
   "jupyter",
   "mkdocs-material",

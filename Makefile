@@ -1,6 +1,10 @@
 install:
 	uv sync --extra dev
 
+gf-main: install
+	uv sync --extra dev --extra gf-main
+	uv run pre-commit install
+
 dev:
 	uv sync --extra dev --extra docs
 	uv pip install -e .[dev,docs] --config-settings editable_mode=compat

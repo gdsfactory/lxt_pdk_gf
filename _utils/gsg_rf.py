@@ -9,6 +9,7 @@ from gdsfactory.cross_section import (
 from gdsfactory.typings import CrossSectionSpec, LayerSpec
 
 from _utils.cell_info import copy_info
+from _utils._common import _add_pins
 from _utils.cross_section import get_cpw_from_xs, xs_cpw_single_layer
 
 
@@ -358,6 +359,7 @@ def via_array(
         layer=layer_m2,
     )
 
+    _add_pins(c_rounded)
     return c_rounded
 
 
@@ -463,6 +465,7 @@ def via_solid(
         layer=layer_m2,
     )
 
+    _add_pins(c_rounded)
     return c_rounded
 
 
@@ -552,6 +555,7 @@ def m2_bonding_pads(
         layer=layer_m2,
     )
 
+    _add_pins(c)
     return c
 
 
@@ -649,6 +653,7 @@ def termination_wire(
         layer=signal_layer,
     )
 
+    _add_pins(c)
     return c
 
 
@@ -779,6 +784,7 @@ def double_layer_termination(
 
     c.flatten()
 
+    _add_pins(c)
     return c
 
 
@@ -1024,6 +1030,7 @@ def cpw_pad(
 
     pad.add_port(name="e2", port=p1.ports["e2"])
 
+    _add_pins(pad)
     return pad
 
 
@@ -1099,6 +1106,7 @@ def straight_cpw(
     cpw.info["rf_central_conductor_width"] = signal_width
     cpw.info["rf_ground_planes_width"] = ground_planes_width
     cpw.info["rf_gap"] = gap_width
+    _add_pins(cpw)
     return cpw
 
 
@@ -1311,6 +1319,7 @@ def trail_cpw(
     for parameter, value in trail_params.items():
         cpw.info[f"trail_{parameter}"] = value
 
+    _add_pins(cpw)
     return cpw
 
 
