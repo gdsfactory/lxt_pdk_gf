@@ -44,6 +44,7 @@ def test_lnoi400_electrical_ports(factory, kwargs):
     assert len(ports) >= 2, (
         f"{factory} has {len(ports)} electrical port(s); expected >= 2"
     )
+    assert len(component.pins) > 0, f"No logical pins on {component.name}"
 
 
 # ---------------------------------------------------------------------------
@@ -83,3 +84,4 @@ def test_ltoi300_electrical_ports(factory, kwargs):
     assert len(ports) >= 2, (
         f"{factory} has {len(ports)} electrical port(s); expected >= 2"
     )
+    assert len(component.pins) > 0, f"No logical pins on {component.name}"
