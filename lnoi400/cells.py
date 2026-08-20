@@ -2,6 +2,7 @@ from functools import partial
 
 import gdsfactory as gf
 import numpy as np
+from gdsfactory.add_pins import add_electrical_pins
 from gdsfactory.routing import route_quad
 from gdsfactory.typings import (
     AngleInDegrees,
@@ -711,6 +712,7 @@ def CPW_pad_linear(
         layer="TL",
     )
 
+    add_electrical_pins(pad)
     return pad
 
 
@@ -767,6 +769,7 @@ def uni_cpw_straight(
     )
     cpw.flatten()
 
+    add_electrical_pins(cpw)
     return cpw
 
 
@@ -891,6 +894,7 @@ def trail_cpw(
 
     cpw.flatten()
 
+    add_electrical_pins(cpw)
     return cpw
 
 
@@ -1036,6 +1040,7 @@ def heater_straight_single(
 
     c.flatten()
 
+    add_electrical_pins(c)
     return c
 
 
@@ -1124,6 +1129,7 @@ def eo_phase_shifter(
 
     ps.flatten()
 
+    add_electrical_pins(ps)
     return ps
 
 
@@ -1522,6 +1528,7 @@ def mzm_unbalanced(
         ]
 
     [mzm.add_port(name=name, port=port) for name, port in exposed_ports]
+    add_electrical_pins(mzm)
     return mzm
 
 

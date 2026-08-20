@@ -1,4 +1,5 @@
 import gdsfactory as gf
+from gdsfactory.add_pins import add_electrical_pins
 
 from _utils.chip_floorplan import chip_frame  # noqa: F401
 from _utils.optical_resonators import ring_resonator as _ring_resonator
@@ -222,7 +223,7 @@ def terminated_mzm_1x2mmi_oband(
         "length": bias_tuning_section_length,
     }
 
-    return _build_terminated_mzm_oband(
+    c = _build_terminated_mzm_oband(
         mmi_cell=mmi_cell,
         modulation_length=modulation_length,
         cpw_params=cpw_params,
@@ -230,6 +231,8 @@ def terminated_mzm_1x2mmi_oband(
         optical_waveguide_params=optical_waveguide_params,
         heater_params=heater_params,
     )
+    add_electrical_pins(c)
+    return c
 
 
 @gf.cell(tags=["cells"])
@@ -266,7 +269,7 @@ def unterminated_mzm_1x2mmi_oband(
     heater_params = {
         "length": bias_tuning_section_length,
     }
-    return _build_unterminated_mzm_oband(
+    c = _build_unterminated_mzm_oband(
         mmi_cell=mmi1x2_oband(),
         modulation_length=modulation_length,
         cpw_params=cpw_params,
@@ -274,6 +277,8 @@ def unterminated_mzm_1x2mmi_oband(
         optical_waveguide_params=optical_waveguide_params,
         heater_params=heater_params,
     )
+    add_electrical_pins(c)
+    return c
 
 
 @gf.cell(tags=["cells"])
@@ -310,7 +315,7 @@ def terminated_mzm_2x2mmi_oband(
     heater_params = {
         "length": bias_tuning_section_length,
     }
-    return _build_terminated_mzm_oband(
+    c = _build_terminated_mzm_oband(
         mmi_cell=mmi2x2_oband(),
         modulation_length=modulation_length,
         cpw_params=cpw_params,
@@ -318,6 +323,8 @@ def terminated_mzm_2x2mmi_oband(
         optical_waveguide_params=optical_waveguide_params,
         heater_params=heater_params,
     )
+    add_electrical_pins(c)
+    return c
 
 
 @gf.cell(tags=["cells"])
@@ -355,7 +362,7 @@ def unterminated_mzm_2x2mmi_oband(
         "length": bias_tuning_section_length,
     }
 
-    return _build_unterminated_mzm_oband(
+    c = _build_unterminated_mzm_oband(
         mmi_cell=mmi2x2_oband(),
         modulation_length=modulation_length,
         cpw_params=cpw_params,
@@ -363,6 +370,8 @@ def unterminated_mzm_2x2mmi_oband(
         optical_waveguide_params=optical_waveguide_params,
         heater_params=heater_params,
     )
+    add_electrical_pins(c)
+    return c
 
 
 @gf.cell
@@ -390,11 +399,13 @@ def unterminated_eo_phase_shifter_oband(
     cpw_pad_params = {
         "pitch": gsg_pitch,
     }
-    return _build_unterminated_eo_phase_shifter_oband(
+    c = _build_unterminated_eo_phase_shifter_oband(
         modulation_length=modulation_length,
         cpw_params=cpw_params,
         cpw_pad_params=cpw_pad_params,
     )
+    add_electrical_pins(c)
+    return c
 
 
 @gf.cell
@@ -422,11 +433,13 @@ def terminated_eo_phase_shifter_oband(
     cpw_pad_params = {
         "pitch": gsg_pitch,
     }
-    return _build_terminated_eo_phase_shifter_oband(
+    c = _build_terminated_eo_phase_shifter_oband(
         modulation_length=modulation_length,
         cpw_params=cpw_params,
         cpw_pad_params=cpw_pad_params,
     )
+    add_electrical_pins(c)
+    return c
 
 
 #####################
@@ -584,7 +597,7 @@ def terminated_mzm_1x2mmi_cband(
     heater_params = {
         "length": bias_tuning_section_length,
     }
-    return _build_terminated_mzm_cband(
+    c = _build_terminated_mzm_cband(
         mmi_cell=mmi1x2_cband(),
         modulation_length=modulation_length,
         cpw_params=cpw_params,
@@ -592,6 +605,8 @@ def terminated_mzm_1x2mmi_cband(
         optical_waveguide_params=optical_waveguide_params,
         heater_params=heater_params,
     )
+    add_electrical_pins(c)
+    return c
 
 
 @gf.cell(tags=["cells"])
@@ -628,7 +643,7 @@ def unterminated_mzm_1x2mmi_cband(
     heater_params = {
         "length": bias_tuning_section_length,
     }
-    return _build_unterminated_mzm_cband(
+    c = _build_unterminated_mzm_cband(
         mmi_cell=mmi1x2_cband(),
         modulation_length=modulation_length,
         cpw_params=cpw_params,
@@ -636,6 +651,8 @@ def unterminated_mzm_1x2mmi_cband(
         optical_waveguide_params=optical_waveguide_params,
         heater_params=heater_params,
     )
+    add_electrical_pins(c)
+    return c
 
 
 @gf.cell(tags=["cells"])
@@ -672,7 +689,7 @@ def terminated_mzm_2x2mmi_cband(
     heater_params = {
         "length": bias_tuning_section_length,
     }
-    return _build_terminated_mzm_cband(
+    c = _build_terminated_mzm_cband(
         mmi_cell=mmi2x2_cband(),
         modulation_length=modulation_length,
         cpw_params=cpw_params,
@@ -680,6 +697,8 @@ def terminated_mzm_2x2mmi_cband(
         optical_waveguide_params=optical_waveguide_params,
         heater_params=heater_params,
     )
+    add_electrical_pins(c)
+    return c
 
 
 @gf.cell(tags=["cells"])
@@ -716,7 +735,7 @@ def unterminated_mzm_2x2mmi_cband(
     heater_params = {
         "length": bias_tuning_section_length,
     }
-    return _build_unterminated_mzm_cband(
+    c = _build_unterminated_mzm_cband(
         mmi_cell=mmi2x2_cband(),
         modulation_length=modulation_length,
         cpw_params=cpw_params,
@@ -724,6 +743,8 @@ def unterminated_mzm_2x2mmi_cband(
         optical_waveguide_params=optical_waveguide_params,
         heater_params=heater_params,
     )
+    add_electrical_pins(c)
+    return c
 
 
 @gf.cell
@@ -751,11 +772,13 @@ def unterminated_eo_phase_shifter_cband(
     cpw_pad_params = {
         "pitch": gsg_pitch,
     }
-    return _build_unterminated_eo_phase_shifter_cband(
+    c = _build_unterminated_eo_phase_shifter_cband(
         modulation_length=modulation_length,
         cpw_params=cpw_params,
         cpw_pad_params=cpw_pad_params,
     )
+    add_electrical_pins(c)
+    return c
 
 
 @gf.cell
@@ -783,11 +806,13 @@ def terminated_eo_phase_shifter_cband(
     cpw_pad_params = {
         "pitch": gsg_pitch,
     }
-    return _build_terminated_eo_phase_shifter_cband(
+    c = _build_terminated_eo_phase_shifter_cband(
         modulation_length=modulation_length,
         cpw_params=cpw_params,
         cpw_pad_params=cpw_pad_params,
     )
+    add_electrical_pins(c)
+    return c
 
 
 #####################
