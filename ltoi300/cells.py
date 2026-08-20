@@ -1,6 +1,6 @@
 import gdsfactory as gf
+from gdsfactory.add_pins import add_electrical_pins
 
-from _utils._common import _add_pins
 from _utils.chip_floorplan import chip_frame  # noqa: F401
 from _utils.optical_resonators import ring_resonator as _ring_resonator
 from ltoi300._builders.edge_couplers import (
@@ -231,7 +231,7 @@ def terminated_mzm_1x2mmi_oband(
         optical_waveguide_params=optical_waveguide_params,
         heater_params=heater_params,
     )
-    _add_pins(c)
+    add_electrical_pins(c)
     return c
 
 
@@ -277,7 +277,7 @@ def unterminated_mzm_1x2mmi_oband(
         optical_waveguide_params=optical_waveguide_params,
         heater_params=heater_params,
     )
-    _add_pins(c)
+    add_electrical_pins(c)
     return c
 
 
@@ -323,7 +323,7 @@ def terminated_mzm_2x2mmi_oband(
         optical_waveguide_params=optical_waveguide_params,
         heater_params=heater_params,
     )
-    _add_pins(c)
+    add_electrical_pins(c)
     return c
 
 
@@ -370,7 +370,7 @@ def unterminated_mzm_2x2mmi_oband(
         optical_waveguide_params=optical_waveguide_params,
         heater_params=heater_params,
     )
-    _add_pins(c)
+    add_electrical_pins(c)
     return c
 
 
@@ -404,7 +404,7 @@ def unterminated_eo_phase_shifter_oband(
         cpw_params=cpw_params,
         cpw_pad_params=cpw_pad_params,
     )
-    _add_pins(c)
+    add_electrical_pins(c)
     return c
 
 
@@ -438,7 +438,7 @@ def terminated_eo_phase_shifter_oband(
         cpw_params=cpw_params,
         cpw_pad_params=cpw_pad_params,
     )
-    _add_pins(c)
+    add_electrical_pins(c)
     return c
 
 
@@ -605,7 +605,7 @@ def terminated_mzm_1x2mmi_cband(
         optical_waveguide_params=optical_waveguide_params,
         heater_params=heater_params,
     )
-    _add_pins(c)
+    add_electrical_pins(c)
     return c
 
 
@@ -651,7 +651,7 @@ def unterminated_mzm_1x2mmi_cband(
         optical_waveguide_params=optical_waveguide_params,
         heater_params=heater_params,
     )
-    _add_pins(c)
+    add_electrical_pins(c)
     return c
 
 
@@ -697,7 +697,7 @@ def terminated_mzm_2x2mmi_cband(
         optical_waveguide_params=optical_waveguide_params,
         heater_params=heater_params,
     )
-    _add_pins(c)
+    add_electrical_pins(c)
     return c
 
 
@@ -743,7 +743,7 @@ def unterminated_mzm_2x2mmi_cband(
         optical_waveguide_params=optical_waveguide_params,
         heater_params=heater_params,
     )
-    _add_pins(c)
+    add_electrical_pins(c)
     return c
 
 
@@ -777,7 +777,7 @@ def unterminated_eo_phase_shifter_cband(
         cpw_params=cpw_params,
         cpw_pad_params=cpw_pad_params,
     )
-    _add_pins(c)
+    add_electrical_pins(c)
     return c
 
 
@@ -811,7 +811,7 @@ def terminated_eo_phase_shifter_cband(
         cpw_params=cpw_params,
         cpw_pad_params=cpw_pad_params,
     )
-    _add_pins(c)
+    add_electrical_pins(c)
     return c
 
 

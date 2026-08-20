@@ -2,6 +2,7 @@ from functools import partial
 
 import gdsfactory as gf
 import numpy as np
+from gdsfactory.add_pins import add_electrical_pins
 from gdsfactory.routing import route_quad
 from gdsfactory.typings import (
     AngleInDegrees,
@@ -14,7 +15,6 @@ from gdsfactory.typings import (
     Size,
 )
 
-from _utils._common import _add_pins
 from _utils.chip_floorplan import chip_frame  # noqa: F401
 from _utils.spline import (
     bend_S_spline,
@@ -712,7 +712,7 @@ def CPW_pad_linear(
         layer="TL",
     )
 
-    _add_pins(pad)
+    add_electrical_pins(pad)
     return pad
 
 
@@ -769,7 +769,7 @@ def uni_cpw_straight(
     )
     cpw.flatten()
 
-    _add_pins(cpw)
+    add_electrical_pins(cpw)
     return cpw
 
 
@@ -894,7 +894,7 @@ def trail_cpw(
 
     cpw.flatten()
 
-    _add_pins(cpw)
+    add_electrical_pins(cpw)
     return cpw
 
 
@@ -1040,7 +1040,7 @@ def heater_straight_single(
 
     c.flatten()
 
-    _add_pins(c)
+    add_electrical_pins(c)
     return c
 
 
@@ -1129,7 +1129,7 @@ def eo_phase_shifter(
 
     ps.flatten()
 
-    _add_pins(ps)
+    add_electrical_pins(ps)
     return ps
 
 
@@ -1145,7 +1145,6 @@ def eo_phase_shifter_high_speed(**kwargs) -> gf.Component:
     kwargs.setdefault("cpw_cell", trail_cpw)
     ps = eo_phase_shifter(**kwargs)
     ps.info["additional_settings"] = dict(ps.settings)
-    _add_pins(ps)
     return ps
 
 
@@ -1529,7 +1528,7 @@ def mzm_unbalanced(
         ]
 
     [mzm.add_port(name=name, port=port) for name, port in exposed_ports]
-    _add_pins(mzm)
+    add_electrical_pins(mzm)
     return mzm
 
 
@@ -1545,7 +1544,6 @@ def mzm_unbalanced_high_speed(**kwargs) -> gf.Component:
     kwargs.setdefault("cpw_cell", trail_cpw)
     mzm = mzm_unbalanced(**kwargs)
     mzm.info["additional_settings"] = dict(mzm.settings)
-    _add_pins(mzm)
     return mzm
 
 

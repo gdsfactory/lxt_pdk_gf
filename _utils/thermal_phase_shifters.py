@@ -2,10 +2,9 @@ from typing import Any
 
 import gdsfactory as gf
 import numpy as np
+from gdsfactory.add_pins import add_electrical_pins
 from gdsfactory.cross_section import CrossSection
 from gdsfactory.routing import route_quad
-
-from _utils._common import _add_pins
 
 
 @gf.cell(tags=["thermal_phase_shifters"])
@@ -34,7 +33,7 @@ def heater_pads_assymm(
     c.add_port(name="e1", port=bps.ports["e11"])
     c.add_port(name="e2", port=bps.ports["e12"])
     c.flatten()
-    _add_pins(c)
+    add_electrical_pins(c)
     return c
 
 
@@ -216,7 +215,7 @@ def heater_straight_compact(
 
     c.flatten()
 
-    _add_pins(c)
+    add_electrical_pins(c)
     return c
 
 
@@ -281,7 +280,7 @@ def add_heater(
     c.add_port(name="e3", port=ht_ref_2.ports["e1"])
     c.add_port(name="e4", port=ht_ref_2.ports["e2"])
 
-    _add_pins(c)
+    add_electrical_pins(c)
     return c
 
 
