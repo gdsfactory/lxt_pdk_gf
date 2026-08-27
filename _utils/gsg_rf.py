@@ -668,7 +668,15 @@ def double_layer_termination(
         cpw_xs: CPW cross-section of the line to be terminated
         termination_layer: High-resistivity layer of the termination wire
         m2_layer: M2 layer of the termination wire
-        effective_length: Effective length of the termination wire corresponding to a single termination resistor equivalent circuit.
+        m2_pad_length: Length (um) of the straight M2 CPW pad placed between
+            the two via stacks
+        termination_params: Settings forwarded to `termination_wire`, with keys
+            effective_length, resistor_width, hr_layer_offset and hr_pad_length
+        via_m1_m2_params: Settings for the CPW-to-M2 via stack. "type" picks
+            `via_array` or `via_solid`; the remaining keys are layer_openings,
+            opening_offset, opening_size, opening_separation and width
+        via_m2_hr_params: Same settings for the M2-to-high-resistivity via
+            stack, built on the termination-layer cross-section
     """
     if termination_params is None:
         termination_params = {
@@ -944,6 +952,9 @@ def cpw_pad(
         m2_bonding_pads_params: optional parameters for `m2_bonding_pads`.
             When provided, `layer_M2` and `layer_Openings` are required keys.
             Other keys are optional and default to `m2_bonding_pads` defaults.
+        single_waveguide: if True only the upper optical waveguide is drawn
+            (ports o1 and o2). Otherwise the lower waveguide is added too,
+            exposing ports o3 and o4.
     """
 
     pad = gf.Component()
