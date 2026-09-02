@@ -14,7 +14,7 @@ from gdsfactory.typings import (
     Size,
 )
 
-from _utils.chip_floorplan import chip_frame  # noqa: F401
+from _utils.chip_floorplan import chip_frame
 from _utils.spline import (
     bend_S_spline,
     bend_S_spline_varying_width,
@@ -1625,18 +1625,26 @@ def die_phix_rf(
     layer_ruler: LayerSpec = "LN_RIDGE",
     ruler_yoffset: float = 0,
     ruler_xoffset: float = 0,
-    fiber_coupler_xoffset: float = 0,
+    fiber_coupler_xoffset: float = 5.0,
     with_right_fiber_coupler: bool = True,
     with_left_fiber_coupler: bool = False,
     text_offset: Float2 = (-40, 20),
     text: ComponentSpec | None = "text_rectangular",
     xoffset_dc_pads: float = -100,
+    xoffset_rf_pads: float = 50.0,
+    exclusion_zone_width: float = 50.0,
 ) -> gf.Component:
     """Die with east west edge couplers and RF pads on north and south.
 
+    Uses the LXT standard chip frame (``chip_frame``), which draws the chip
+    contour on CHIP_CONTOUR (6/0) and the exclusion zone on
+    CHIP_EXCLUSION_ZONE (6/1). Only edge couplers routing to the chip facet may
+    be placed in the exclusion zone, so the edge couplers overhang the frame by
+    ``fiber_coupler_xoffset``.
+
     Args:
-        xsize: die x size in um.
-        ysize: die y size in um.
+        xsize: die x size in um. Must be an admissible chip_frame size (5000, 10000 or 20000).
+        ysize: die y size in um. Must be an admissible chip_frame size (5000, 10000 or 20000).
         nfibers: number of fibers.
         npads: number of DC pads. Computed from xsize and pad_pitch if None.
         npads_rf: number of RF pads.
@@ -1656,12 +1664,15 @@ def die_phix_rf(
         layer_ruler: layer for ruler.
         ruler_yoffset: y offset for ruler.
         ruler_xoffset: x offset for ruler.
-        fiber_coupler_xoffset: x offset for fiber couplers.
+        fiber_coupler_xoffset: x offset for fiber couplers, in um. Positive values push the
+            edge couplers outwards, past the chip frame and into the exclusion zone.
         with_right_fiber_coupler: if True adds right fiber coupler.
         with_left_fiber_coupler: if True adds left fiber coupler.
         text_offset: offset for the text label.
         text: text component.
         xoffset_dc_pads: x offset for dc pads.
+        xoffset_rf_pads: x offset for the rf pads from the left chip contour, in um.
+        exclusion_zone_width: width of the chip frame exclusion zone, in um.
     """
     if npads is None:
         npads = max(0, min(int((xsize - 2 * edge_coupler_keepout) / pad_pitch) - 1, 60))
@@ -1672,7 +1683,15 @@ def die_phix_rf(
         - pad_pitch / 2
         + xoffset_dc_pads
     )
-    d = gf.c.die_frame(size=(xsize, ysize), layer_floorplan="CHIP_CONTOUR")
+    d = chip_frame(size=(xsize, ysize), exclusion_zone_width=exclusion_zone_width)
+
+    # Pads and fiducials are placed relative to the die frame bbox, which now
+    # includes the exclusion zone. Offset them by the exclusion zone width so
+    # they keep their distance to the chip contour and stay out of the
+    # exclusion zone, which is reserved for the edge coupler routing.
+    pad_side_distance += exclusion_zone_width
+    edge_to_pad_distance += exclusion_zone_width
+    xoffset_rf_pads += exclusion_zone_width
     return gf.c.die_frame_phix_rf(
         die_frame=d,
         nfibers=nfibers,
@@ -1699,4 +1718,5 @@ def die_phix_rf(
         text_offset=text_offset,
         text=text,
         pad_side_distance=pad_side_distance,
+        xoffset_rf_pads=xoffset_rf_pads,
     )
