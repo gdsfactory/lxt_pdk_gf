@@ -8,34 +8,36 @@ from lnoi400.tech import LAYER
 def _measure_gsg_edges(component: gf.Component, port_name: str) -> dict:
     """Measure the y-extents of each GSG conductor at a port's x-coordinate.
 
+    @tags lnoi400-gsg
+
     Returns dict with keys 'signal', 'ground_top', 'ground_bot', each a (y_min, y_max) tuple.
     """
     port = component.ports[port_name]
-    x_port = port.dcenter[0]
-    x_port_nm = x_port * 1000
-
-    tl_layer_idx = None
-    ly = component.kcl.layout
-    for li in component.get_polygons().keys():
-        info = ly.get_info(li)
-        if (info.layer, info.datatype) == (LAYER.TL[0], LAYER.TL[1]):
-            tl_layer_idx = li
-            break
+    layout = component.kcl.layout
+    tl_layer = layout.layer(*LAYER.TL)
+    x_port_dbu = round(port.dcenter[0] / component.kcl.dbu)
+    region = gf.kdb.Region(component.begin_shapes_rec(tl_layer))
 
     conductors = []
-    for poly in component.get_polygons()[tl_layer_idx]:
+    for poly in region.each():
         pts = np.array([(pt.x, pt.y) for pt in poly.each_point_hull()], dtype=float)
         n = len(pts)
         y_crossings = []
         for j in range(n):
             p1, p2 = pts[j], pts[(j + 1) % n]
-            if (p1[0] - x_port_nm) * (p2[0] - x_port_nm) <= 0 and abs(
+            if (p1[0] - x_port_dbu) * (p2[0] - x_port_dbu) <= 0 and abs(
                 p2[0] - p1[0]
             ) > 0.1:
-                t = (x_port_nm - p1[0]) / (p2[0] - p1[0])
-                y_crossings.append((p1[1] + t * (p2[1] - p1[1])) / 1000)
+                t = (x_port_dbu - p1[0]) / (p2[0] - p1[0])
+                y_crossings.append((p1[1] + t * (p2[1] - p1[1])) * component.kcl.dbu)
         if y_crossings:
             conductors.append((min(y_crossings), max(y_crossings)))
+
+    if len(conductors) != 3:
+        raise ValueError(
+            f"Expected three TL conductors at port {port_name!r}, "
+            f"found {len(conductors)}."
+        )
 
     conductors.sort(key=lambda c: (c[0] + c[1]) / 2)
     return {
@@ -52,6 +54,8 @@ def _gsg_taper(
     layer: tuple[int, int],
 ) -> gf.Component:
     """Three-conductor GSG taper defined by exact edge positions on each side.
+
+    @tags lnoi400-gsg
 
     Port e1 at x=0 (start side), port e2 at x=length (end side).
     """
@@ -87,7 +91,7 @@ def _gsg_taper(
     return c
 
 
-@gf.cell
+@gf.cell(tags=["lnoi400-gsg"])
 def mzm_with_pads(
     mzm: ComponentSpec = "mzm_unbalanced_high_speed",
     pad: ComponentSpec = "pad_gsg",
@@ -145,16 +149,9 @@ def mzm_with_pads(
     c.add_port("o1", port=mzm_ref.ports["o1"])
     c.add_port("o2", port=mzm_ref.ports["o2"])
 
-    # Expose outer pad ports for probing, offset 10 µm outward so they
-    # sit flush beyond the pad edge.
-    port_offset = 10.0
-
-    e1 = pad_in.ports["e1"].copy()
-    e1.dcenter = (e1.dcenter[0] - port_offset, e1.dcenter[1])
-    c.add_port("e1", port=e1)
-
-    e2 = pad_out.ports["e2"].copy()
-    e2.dcenter = (e2.dcenter[0] + port_offset, e2.dcenter[1])
-    c.add_port("e2", port=e2)
+    # Keep the exported ports on the pad metal so connections do not bridge
+    # an un-routed gap outside the component.
+    c.add_port("e1", port=pad_in.ports["e1"])
+    c.add_port("e2", port=pad_out.ports["e2"])
 
     return c

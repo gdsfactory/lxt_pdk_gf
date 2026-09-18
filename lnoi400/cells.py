@@ -23,6 +23,7 @@ from _utils.spline import (
 from lnoi400._builders.grating_couplers import (
     build_gc_focusing_1550 as _build_gc_focusing_1550,
 )
+from lnoi400.mzm_with_pads import mzm_with_pads  # noqa: F401
 from lnoi400.tech import LAYER, xs_uni_cpw
 
 ################
@@ -1529,9 +1530,11 @@ def mzm_unbalanced(
     # Expose the ports
 
     exposed_ports = [
+        ("e1", rf_line.ports["bp1"]),
         ("G1_top", rf_line.ports["bp1_G_top"]),
         ("S1", rf_line.ports["bp1_S"]),
         ("G1_bot", rf_line.ports["bp1_G_bot"]),
+        ("e2", rf_line.ports["bp2"]),
         ("G2_top", rf_line.ports["bp2_G_top"]),
         ("S2", rf_line.ports["bp2_S"]),
         ("G2_bot", rf_line.ports["bp2_G_bot"]),
