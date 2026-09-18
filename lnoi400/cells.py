@@ -641,6 +641,8 @@ def CPW_pad_linear(
     """RF access line for high-frequency GSG probes. The probe pad maintains a
     fixed gap/central conductor ratio across its length, to achieve a good
 
+    @tags lnoi400-gsg
+
     Args:
         start_width: 80.0.
         length_straight: 10.0.
@@ -763,6 +765,8 @@ def uni_cpw_straight(
 ) -> gf.Component:
     """A CPW transmission line for microwaves, with a uniform cross section.
 
+    @tags lnoi400-gsg
+
     Args:
         length: 1000.0.
         cross_section: "xs_uni_cpw".
@@ -822,6 +826,8 @@ def trail_cpw(
     cross_section: CrossSectionSpec = xs_uni_cpw,
 ) -> gf.Component:
     """A CPW transmission line with periodic T-rails on all electrodes.
+
+    @tags lnoi400-gsg
 
     Args:
         length: 1000.0.
@@ -1385,6 +1391,8 @@ def mzm_unbalanced(
     **kwargs,
 ) -> gf.Component:
     """Mach-Zehnder modulator based on the Pockels effect with an applied RF electric field.
+
+    @tags lnoi400-gsg
 
     Args:
         modulation_length: 7500.0.

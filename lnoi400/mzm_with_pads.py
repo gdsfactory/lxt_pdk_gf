@@ -99,6 +99,8 @@ def mzm_with_pads(
 ) -> gf.Component:
     """MZM with GSG pads connected to both electrical ports.
 
+    @tags lnoi400-gsg
+
     Places a pad_gsg on each side of the MZM (input e1, output e2)
     with a GSG taper that smoothly bridges the exact conductor edges
     of the pad and the MZM, including the ground planes.
