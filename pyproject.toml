@@ -6,7 +6,7 @@ requires = ["setuptools>=80", "wheel"]
 
 [project]
 authors = [
-  {name = "Luxtelligence", email = "foundry@luxtelligence.ai"}
+  { name = "Luxtelligence", email = "foundry@luxtelligence.ai" }
 ]
 classifiers = [
   "Programming Language :: Python :: 3.11",
@@ -14,12 +14,13 @@ classifiers = [
   "Operating System :: OS Independent"
 ]
 dependencies = [
-  "gdsfactory~=9.45.0",
+  "gdsfactory~=9.51.0",
+  "gdsfactoryplus",
   "gplugins[sax]~=2.1.0"
 ]
 description = "Luxtelligence gdsfactory PDK"
 keywords = ["python"]
-license = {file = "LICENSE"}
+license = { file = "LICENSE" }
 name = "lnoi400"
 readme = "README.md"
 requires-python = "~=3.12.0"
@@ -27,7 +28,6 @@ version = "2.0"
 
 [project.optional-dependencies]
 dev = [
-  "gdsfactoryplus",
   "pre-commit",
   "pytest",
   "pytest-cov",
@@ -41,9 +41,6 @@ docs = [
   "nbconvert",
   "mkdocstrings[python]>=0.27.0",
   "zensical>=0.0.40,<0.1.0"
-]
-plus = [
-  "gdsfactoryplus"
 ]
 
 [tool.codespell]
@@ -103,7 +100,7 @@ select = [
 "*" = ["*.csv", "*.yaml"]
 
 [tool.setuptools.packages]
-find = {exclude = ["tests", "tests.*", "docs", "docs.*"]}
+find = { exclude = ["tests", "tests.*", "docs", "docs.*"] }
 
 [tool.tbump]
 
