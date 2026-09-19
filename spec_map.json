@@ -1,3 +1,4 @@
 {
-  "lnoi400-chip-edge": "specs/chip-edge-singulation.md"
+  "lnoi400-chip-edge": "specs/chip-edge-singulation.md",
+  "pdk-manhattan-ports": "specs/manhattan-port-orientations.md"
 }
