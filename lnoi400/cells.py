@@ -23,6 +23,7 @@ from _utils.spline import (
 from lnoi400._builders.grating_couplers import (
     build_gc_focusing_1550 as _build_gc_focusing_1550,
 )
+from lnoi400.mzm_with_pads import mzm_with_pads  # noqa: F401
 from lnoi400.tech import LAYER, xs_uni_cpw
 
 ################
@@ -655,6 +656,8 @@ def CPW_pad_linear(
     """RF access line for high-frequency GSG probes. The probe pad maintains a
     fixed gap/central conductor ratio across its length, to achieve a good
 
+    @tags lnoi400-gsg
+
     Args:
         start_width: 80.0.
         length_straight: 10.0.
@@ -726,6 +729,38 @@ def CPW_pad_linear(
         layer="TL",
     )
 
+    # GSG ports at the wide (e1) end
+    gnd_inner = start_width / 2.0 + start_gap
+    gnd_outer = end_width / 2.0 + end_gap + ground_planes_width
+    dbu = 0.001
+    gnd_width = round((gnd_outer - gnd_inner) / (2 * dbu)) * (2 * dbu)
+    gnd_center_y = (gnd_inner + gnd_outer) / 2.0
+
+    pad.add_port(
+        name="S",
+        center=(length_straight, 0.0),
+        width=start_width,
+        orientation=180.0,
+        port_type="electrical",
+        layer="TL",
+    )
+    pad.add_port(
+        name="G_top",
+        center=(length_straight, gnd_center_y),
+        width=gnd_width,
+        orientation=180.0,
+        port_type="electrical",
+        layer="TL",
+    )
+    pad.add_port(
+        name="G_bot",
+        center=(length_straight, -gnd_center_y),
+        width=gnd_width,
+        orientation=180.0,
+        port_type="electrical",
+        layer="TL",
+    )
+
     return pad
 
 
@@ -744,6 +779,8 @@ def uni_cpw_straight(
     bondpad: ComponentSpec = "CPW_pad_linear",
 ) -> gf.Component:
     """A CPW transmission line for microwaves, with a uniform cross section.
+
+    @tags lnoi400-gsg
 
     Args:
         length: 1000.0.
@@ -780,6 +817,9 @@ def uni_cpw_straight(
         name="bp2",
         port=bp2.ports["e1"],
     )
+    for suffix in ("S", "G_top", "G_bot"):
+        cpw.add_port(name=f"bp1_{suffix}", port=bp1.ports[suffix])
+        cpw.add_port(name=f"bp2_{suffix}", port=bp2.ports[suffix])
     cpw.flatten()
 
     return cpw
@@ -801,6 +841,8 @@ def trail_cpw(
     cross_section: CrossSectionSpec = xs_uni_cpw,
 ) -> gf.Component:
     """A CPW transmission line with periodic T-rails on all electrodes.
+
+    @tags lnoi400-gsg
 
     Args:
         length: 1000.0.
@@ -846,6 +888,9 @@ def trail_cpw(
         name="bp2",
         port=bp2.ports["e1"],
     )
+    for suffix in ("S", "G_top", "G_bot"):
+        cpw.add_port(name=f"bp1_{suffix}", port=bp1.ports[suffix])
+        cpw.add_port(name=f"bp2_{suffix}", port=bp2.ports[suffix])
 
     # Initiate T-rail polygon element. Create a bit more to ensure round corners close to electrodes
     trailpol = gf.kdb.DPolygon(
@@ -1362,6 +1407,8 @@ def mzm_unbalanced(
 ) -> gf.Component:
     """Mach-Zehnder modulator based on the Pockels effect with an applied RF electric field.
 
+    @tags lnoi400-gsg
+
     Args:
         modulation_length: 7500.0.
         length_imbalance: 100.0.
@@ -1507,7 +1554,13 @@ def mzm_unbalanced(
 
     exposed_ports = [
         ("e1", rf_line.ports["bp1"]),
+        ("G1_top", rf_line.ports["bp1_G_top"]),
+        ("S1", rf_line.ports["bp1_S"]),
+        ("G1_bot", rf_line.ports["bp1_G_bot"]),
         ("e2", rf_line.ports["bp2"]),
+        ("G2_top", rf_line.ports["bp2_G_top"]),
+        ("S2", rf_line.ports["bp2_S"]),
+        ("G2_bot", rf_line.ports["bp2_G_bot"]),
     ]
 
     if "1x2" in kwargs["splitter"]:
