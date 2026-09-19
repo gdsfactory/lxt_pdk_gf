@@ -7,6 +7,11 @@ nav:
       - Cells Lnoi400: cells_lnoi400.md
       - Cells Ltoi300: cells_ltoi300.md
       - Changelog: changelog.md
+markdown_extensions:
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.superfences
+  - admonition
 plugins:
   - search
   - autorefs

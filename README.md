@@ -73,6 +73,58 @@ Place the downloaded `.lydrc` file(s) in your local KLayout DRC folder:
 
 ## Examples
 
+### Chip edge, singulation, and polishing
+
+For LNOI400 edge couplers, **the outside edge of layer 6/1
+(`CHIP_EXCLUSION_ZONE`) is the physical chip edge**. Layer 6/0
+(`CHIP_CONTOUR`) serves other layout purposes and does not define the
+straight tip extension.
+
+The coupler tip extends **5 µm outside layer 6/1**, regardless of the total
+straight tip length. At least **5 µm of constant-width straight** remains
+inside that edge for successful singulation:
+
+| Process | Total straight tip (`input_ext`) | Outside 6/1 | Inside 6/1 |
+| --- | --- | --- | --- |
+| Singulation without polishing | 10 µm | 5 µm | 5 µm |
+| Singulation with polishing allowance | Approximately 30 µm | 5 µm | Approximately 25 µm |
+
+The longer polishing option keeps the width at the polished facet constant.
+Do not use the longer straight by default when polishing is not planned:
+the large tip mode interacts with silicon over a longer distance, which can
+increase edge-coupler insertion loss. The required polishing allowance depends
+on the planned process; approximately 30 µm is a guide, not a predicted loss
+or a fixed polishing removal depth.
+
+`lnoi400.cells.die_phix_rf()` uses the standard LXT chip frame and the 10 µm
+straight tip by default. For polishing, keep the same 5 µm facet offset and
+change only the straight length:
+
+```python
+import lnoi400
+from lnoi400 import cells
+
+lnoi400.PDK.activate()
+die = cells.die_phix_rf(
+    edge_coupler={
+        "component": "double_linear_inverse_taper_mirror",
+        "settings": {"input_ext": 30.0},
+    },
+    fiber_coupler_xoffset=5.0,
+)
+```
+
+Both right and optional left coupler arrays use this outward offset from 6/1.
+Custom couplers must supply at least 10 µm of constant-width straight tip.
+The low-level unmirrored `double_linear_inverse_taper` retains its zero-extension
+default; set `input_ext` explicitly when using it at a singulated chip edge.
+
+The die wrapper follows `chip_frame` dimension restrictions: nominal dimensions
+of 5000, 10000, and 20000 µm map to layer-6/0 extents of 4950, 10000, and
+20100 µm respectively, within the frame's existing tolerances. A nominal
+5000-by-5000 µm die is unsupported. Layer 6/1 adds `exclusion_zone_width` on
+each side. Pad offsets remain referenced to layer 6/0.
+
 After installing the PDK, you can verify that it is working correctly by running the Jupyter notebooks in the [docs/notebooks](https://github.com/Luxtelligence/lxt_pdk_gf/tree/main/docs/notebooks) folder.
 
 ## Documentation

@@ -14,7 +14,7 @@ from gdsfactory.typings import (
     Size,
 )
 
-from _utils.chip_floorplan import chip_frame  # noqa: F401
+from _utils.chip_floorplan import chip_frame
 from _utils.spline import (
     bend_S_spline,
     bend_S_spline_varying_width,
@@ -473,7 +473,13 @@ def double_linear_inverse_taper(
     slab_removal_width: float = 20.0,
     input_ext: float = 0.0,
 ) -> gf.Component:
-    """Inverse taper with two layers, starting from a wire waveguide at the facet
+    """Inverse taper from a wire waveguide at the facet to a rib waveguide.
+
+    @tags lnoi400-chip-edge
+
+    When placed at a chip edge, use input_ext=10 for singulation without
+    polishing or approximately 30 for polishing. Place the tip 5 um outside
+    layer 6/1 independently of input_ext; layer 6/0 does not define the facet.
 
     Args:
         cross_section_start: "xs_swg250".
@@ -483,8 +489,9 @@ def double_linear_inverse_taper(
         upper_taper_start_width: 0.25.
         upper_taper_length: 240.0.
         slab_removal_width: 20.0.
-        input_ext: 0.0.
-    and transitioning to a rib waveguide. The tapering profile is linear in both layers."""
+        input_ext: Constant-width straight tip length in um. The primitive
+            default is zero; chip-edge singulation requires at least 10 um.
+    """
 
     lower_taper_start_width = gf.get_cross_section(cross_section_start).width
     upper_taper_end_width = gf.get_cross_section(cross_section_end).width
@@ -571,9 +578,16 @@ def double_linear_inverse_taper_mirror(
     upper_taper_start_width: float = 0.25,
     upper_taper_length: float = 240.0,
     slab_removal_width: float = 20.0,
-    input_ext: float = 30.0,
+    input_ext: float = 10.0,
 ) -> gf.Component:
     """Same as double_linear_inverse_taper, but mirrored so the narrow end is on the right.
+
+    @tags lnoi400-chip-edge
+
+    The default 10 um straight tip supports singulation without polishing.
+    Use approximately 30 um when polishing is planned, keeping the tip 5 um
+    outside layer 6/1. A longer unpolished tip can increase insertion loss
+    through interaction of its large optical mode with silicon.
 
     Args:
         cross_section_start: starting cross section.
@@ -583,7 +597,8 @@ def double_linear_inverse_taper_mirror(
         upper_taper_start_width: start width of the upper taper in um.
         upper_taper_length: length of the upper taper in um.
         slab_removal_width: width of the slab removal in um.
-        input_ext: input extension in um.
+        input_ext: Total constant-width tip length in um, including the 5 um
+            outside the physical chip edge and at least 5 um inside it.
     """
 
     c = double_linear_inverse_taper(
@@ -1678,18 +1693,27 @@ def die_phix_rf(
     layer_ruler: LayerSpec = "LN_RIDGE",
     ruler_yoffset: float = 0,
     ruler_xoffset: float = 0,
-    fiber_coupler_xoffset: float = 0,
+    fiber_coupler_xoffset: float = 5.0,
     with_right_fiber_coupler: bool = True,
     with_left_fiber_coupler: bool = False,
     text_offset: Float2 = (-40, 20),
     text: ComponentSpec | None = "text_rectangular",
     xoffset_dc_pads: float = -100,
+    xoffset_rf_pads: float = 50.0,
+    exclusion_zone_width: float = 50.0,
 ) -> gf.Component:
     """Die with east west edge couplers and RF pads on north and south.
 
+    @tags lnoi400-chip-edge
+
+    The physical chip edge is the outside of CHIP_EXCLUSION_ZONE (6/1),
+    not CHIP_CONTOUR (6/0). The default facet overhang is 5 um regardless
+    of the coupler's straight tip length. The default mirrored coupler uses
+    10 um of straight tip; configure input_ext=30 for polishing allowance.
+
     Args:
-        xsize: die x size in um.
-        ysize: die y size in um.
+        xsize: Nominal die x size in um, subject to chip_frame size snapping.
+        ysize: Nominal die y size in um, subject to chip_frame size snapping.
         nfibers: number of fibers.
         npads: number of DC pads. Computed from xsize and pad_pitch if None.
         npads_rf: number of RF pads.
@@ -1709,12 +1733,16 @@ def die_phix_rf(
         layer_ruler: layer for ruler.
         ruler_yoffset: y offset for ruler.
         ruler_xoffset: x offset for ruler.
-        fiber_coupler_xoffset: x offset for fiber couplers.
+        fiber_coupler_xoffset: Outward facet offset from layer 6/1, in um.
+            Keep at 5 for the standard singulation geometry, including polishing.
         with_right_fiber_coupler: if True adds right fiber coupler.
         with_left_fiber_coupler: if True adds left fiber coupler.
         text_offset: offset for the text label.
         text: text component.
         xoffset_dc_pads: x offset for dc pads.
+        xoffset_rf_pads: RF pad x offset from the left chip contour, in um.
+        exclusion_zone_width: Border between layer 6/0 and physical edge 6/1,
+            in um. Pads retain their offsets relative to layer 6/0.
     """
     if npads is None:
         npads = max(0, min(int((xsize - 2 * edge_coupler_keepout) / pad_pitch) - 1, 60))
@@ -1725,7 +1753,11 @@ def die_phix_rf(
         - pad_pitch / 2
         + xoffset_dc_pads
     )
-    d = gf.c.die_frame(size=(xsize, ysize), layer_floorplan="CHIP_CONTOUR")
+    d = chip_frame(size=(xsize, ysize), exclusion_zone_width=exclusion_zone_width)
+    # The frame bbox includes the border; preserve pad offsets from layer 6/0.
+    pad_side_distance += exclusion_zone_width
+    edge_to_pad_distance += exclusion_zone_width
+    xoffset_rf_pads += exclusion_zone_width
     return gf.c.die_frame_phix_rf(
         die_frame=d,
         nfibers=nfibers,
@@ -1752,4 +1784,5 @@ def die_phix_rf(
         text_offset=text_offset,
         text=text,
         pad_side_distance=pad_side_distance,
+        xoffset_rf_pads=xoffset_rf_pads,
     )

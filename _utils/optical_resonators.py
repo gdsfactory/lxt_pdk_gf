@@ -50,7 +50,10 @@ def ring_resonator(
     bus_length: float | None = None,
     over_under_distance: float = 0.5,
 ) -> gf.Component:
-    """A ring resonator with an evanescent coupler."""
+    """A ring resonator with an evanescent coupler.
+
+    @tags ltoi300-ring-slab
+    """
 
     ring_resonator = ring(
         cross_section=ring_xs,
@@ -72,6 +75,10 @@ def ring_resonator(
         ring_ref.dcenter[1],
     ]
 
+    # Isolate slab cleanup from the shared, cached ring and bus cells.
+    c.add_ports(coupler_ref.ports)
+    c.flatten()
+
     # Fix acute corners in the sleeve layers
 
     main_layers = {bus_xs.layer, ring_xs.layer}
@@ -84,8 +91,6 @@ def ring_resonator(
     for layer in sleeve_layers:
         c.over_under(layer=layer, distance=over_under_distance)
 
-    c.add_ports(coupler_ref.ports)
-    c.flatten()
     return c
 
 
