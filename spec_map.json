@@ -1,3 +1,5 @@
 {
-  "ltoi300-ring-slab": "specs/ring-resonator-slab.md"
+  "lnoi400-chip-edge": "specs/chip-edge-singulation.md",
+  "ltoi300-ring-slab": "specs/ring-resonator-slab.md",
+  "pdk-manhattan-ports": "specs/manhattan-port-orientations.md"
 }
