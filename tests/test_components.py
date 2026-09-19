@@ -3,6 +3,7 @@ import pathlib
 import shutil
 import tempfile
 
+import gdsfactory as gf
 import klayout.db as kdb
 import numpy as np
 import pytest
@@ -127,6 +128,87 @@ def test_settings(
     pdk.activate()
     component = pdk.cells[component_name]()
     data_regression.check(component.to_dict(with_ports=True))
+
+
+def _is_manhattan_orientation(orientation: float) -> bool:
+    """Return whether an angle is within the Manhattan tolerance.
+
+    @tags pdk-manhattan-ports
+    """
+    angular_distance = abs((orientation + 45.0) % 90.0 - 45.0)
+    # Absorb modulo roundoff at the inclusive boundary, without relative tolerance.
+    return angular_distance <= 1e-3 + 1e-12
+
+
+@pytest.mark.parametrize(
+    "orientation, expected",
+    [
+        (0.0, True),
+        (90.0, True),
+        (180.0, True),
+        (270.0, True),
+        (360.0, True),
+        (-90.0, True),
+        (-0.0005, True),
+        (359.9995, True),
+        (90.0005, True),
+        (180.0005, True),
+        (270.0005, True),
+        (0.001, True),
+        (-0.001, True),
+        (89.999, True),
+        (90.001, True),
+        (179.999, True),
+        (180.001, True),
+        (269.999, True),
+        (270.001, True),
+        (359.999, True),
+        (360.001, True),
+        (0.001001, False),
+        (90.001001, False),
+        (180.001001, False),
+        (270.001001, False),
+        (359.998999, False),
+        (0.003, False),
+        (90.003, False),
+        (180.003, False),
+        (270.003, False),
+        (359.997, False),
+        (45.0, False),
+    ],
+)
+def test_manhattan_orientation_tolerance(orientation: float, expected: bool) -> None:
+    """Catch asymmetric wrapping and angle-dependent tolerance.
+
+    @tags pdk-manhattan-ports
+    """
+    assert _is_manhattan_orientation(orientation) is expected
+
+
+skip_test_manhattan_ports: set[str] = set()
+
+
+def test_port_orientations_manhattan(
+    pdk_name: str,
+    component_name: str,
+) -> None:
+    """Ensure that all ports have a Manhattan orientation (0, 90, 180 or 270 deg).
+
+    @tags pdk-manhattan-ports
+    """
+    if component_name in skip_test_manhattan_ports:
+        pytest.skip(f"Skipping manhattan port orientation test for {component_name}")
+    pdk = pdks[pdk_name]
+    pdk.activate()
+    component = pdk.cells[component_name]()
+    if isinstance(component, gf.ComponentAllAngle):
+        pytest.skip(f"{component_name} is an all-angle component")
+    for port in component.ports:
+        if not _is_manhattan_orientation(port.orientation):
+            raise AssertionError(
+                f"Port {port.name} of {pdk_name}.{component_name} has non-manhattan "
+                f"orientation {port.orientation} degrees."
+            )
 
 
 def test_models_with_wavelength_sweep(
