@@ -2,7 +2,9 @@
 
 The release naming convention follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v2.1.0
+## v2.1.1
+
+GDSFactory-maintained release based on Luxtelligence v2.1.0, with the additions and fixes below.
 
 ### New
 
