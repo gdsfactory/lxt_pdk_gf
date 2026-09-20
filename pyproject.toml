@@ -19,7 +19,7 @@ dependencies = [
   "gplugins[sax]~=2.1.0"
 ]
 description = "Luxtelligence gdsfactory PDK"
-keywords = ["python"]
+keywords = ["eda", "gdsfactory", "lnoi400", "luxtelligence", "pdk", "photonics", "python"]
 license = { file = "LICENSE" }
 name = "lnoi400"
 readme = "README.md"
