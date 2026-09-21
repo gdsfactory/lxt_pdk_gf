@@ -96,9 +96,14 @@ increase edge-coupler insertion loss. The required polishing allowance depends
 on the planned process; approximately 30 µm is a guide, not a predicted loss
 or a fixed polishing removal depth.
 
-`lnoi400.cells.die_phix_rf()` uses the standard LXT chip frame and the 10 µm
-straight tip by default. For polishing, keep the same 5 µm facet offset and
-change only the straight length:
+`lnoi400.cells.die_phix_rf()` assumes PHIX polishing and defaults to **57 DC
+pads on each north/south side** and a **30 µm straight tip**, with the same
+5 µm facet offset. Pass `npads=None` to compute a pad count from the die size
+and keepout, or an integer to set a custom count.
+
+The standalone `double_linear_inverse_taper_mirror()` retains its 10 µm
+singulation default. For a die without polishing, explicitly select that
+shorter straight:
 
 ```python
 import lnoi400
@@ -108,7 +113,7 @@ lnoi400.PDK.activate()
 die = cells.die_phix_rf(
     edge_coupler={
         "component": "double_linear_inverse_taper_mirror",
-        "settings": {"input_ext": 30.0},
+        "settings": {"input_ext": 10.0},
     },
     fiber_coupler_xoffset=5.0,
 )

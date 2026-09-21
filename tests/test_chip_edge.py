@@ -19,7 +19,7 @@ def test_mirrored_coupler_defaults_to_singulation_length():
     assert abs(coupler.ports["o2"].dx - coupler.ports["o1"].dx) == 370
 
 
-@pytest.mark.parametrize("input_ext", [10.0, 30.0])
+@pytest.mark.parametrize("input_ext", [None, 10.0, 30.0])
 @pytest.mark.parametrize("exclusion_zone_width", [50.0, 100.0])
 def test_facet_overhang_and_straight_on_both_chip_edges(
     input_ext, exclusion_zone_width
@@ -29,16 +29,24 @@ def test_facet_overhang_and_straight_on_both_chip_edges(
     @tags lnoi400-chip-edge
     """
     lnoi400.PDK.activate()
+    coupler_kwargs = (
+        {}
+        if input_ext is None
+        else {
+            "edge_coupler": {
+                "component": "double_linear_inverse_taper_mirror",
+                "settings": {"input_ext": input_ext},
+            }
+        }
+    )
+    input_ext = 30.0 if input_ext is None else input_ext
     die = cells.die_phix_rf(
         nfibers=6,
         npads=2,
         npads_rf=2,
         text=None,
         with_left_fiber_coupler=True,
-        edge_coupler={
-            "component": "double_linear_inverse_taper_mirror",
-            "settings": {"input_ext": input_ext},
-        },
+        **coupler_kwargs,
         exclusion_zone_width=exclusion_zone_width,
     )
     dbu = die.kcl.dbu
@@ -66,3 +74,22 @@ def test_facet_overhang_and_straight_on_both_chip_edges(
         expected = kdb.DBox(xmin, port.dy - 0.125, xmax, port.dy + 0.125).to_itype(dbu)
         assert ((slab & kdb.Region(clip)) ^ kdb.Region(expected)).is_empty()
         assert side * (edge - straight_start) == input_ext - 5
+
+
+@pytest.mark.parametrize(
+    "kwargs, expected", [({}, 57), ({"npads": None}, 49), ({"npads": 12}, 12)]
+)
+def test_phix_dc_pads_per_side(kwargs, expected):
+    """Default to the PHIX pad count while retaining explicit and automatic counts."""
+    lnoi400.PDK.activate()
+    die = cells.die_phix_rf(**kwargs)
+    for orientation in (90, 270):
+        pads = [
+            p
+            for p in die.ports
+            if p.port_type == "electrical" and p.orientation == orientation
+        ]
+        assert len(pads) == expected
+        assert len({p.dy for p in pads}) == 1
+        positions = sorted(p.dx for p in pads)
+        assert all(b - a == 150 for a, b in zip(positions, positions[1:]))
