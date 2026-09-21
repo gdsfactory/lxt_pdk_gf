@@ -1675,12 +1675,14 @@ def die_phix_rf(
     xsize: float = 10e3,
     ysize: float = 5e3,
     nfibers: int = 16,
-    npads: int | None = None,
+    npads: int | None = 57,
     npads_rf: int = 6,
     fiber_pitch: float = 127.0,
     pad_pitch: float = 150.0,
     pad_pitch_gsg: float = 720.0,
-    edge_coupler: ComponentSpec | None = "double_linear_inverse_taper_mirror",
+    edge_coupler: ComponentSpec | None = partial(
+        double_linear_inverse_taper_mirror, input_ext=30.0
+    ),
     grating_coupler: ComponentSpec | None = None,
     cross_section: CrossSectionSpec = "xs_rwg1000",
     pad: ComponentSpec = "pad",
@@ -1708,14 +1710,16 @@ def die_phix_rf(
 
     The physical chip edge is the outside of CHIP_EXCLUSION_ZONE (6/1),
     not CHIP_CONTOUR (6/0). The default facet overhang is 5 um regardless
-    of the coupler's straight tip length. The default mirrored coupler uses
-    10 um of straight tip; configure input_ext=30 for polishing allowance.
+    of the coupler's straight tip length. This PHIX ADK assumes polishing,
+    so its default mirrored coupler uses 30 um of straight tip. There are
+    57 DC pads on each of the north and south sides.
 
     Args:
         xsize: Nominal die x size in um, subject to chip_frame size snapping.
         ysize: Nominal die y size in um, subject to chip_frame size snapping.
         nfibers: number of fibers.
-        npads: number of DC pads. Computed from xsize and pad_pitch if None.
+        npads: Number of DC pads per north/south side, default 57. Pass None
+            to compute from xsize, edge_coupler_keepout, and pad_pitch.
         npads_rf: number of RF pads.
         fiber_pitch: of the edge couplers in um.
         pad_pitch: pitch between pads.
